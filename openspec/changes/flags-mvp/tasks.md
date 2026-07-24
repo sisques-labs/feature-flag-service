@@ -78,10 +78,13 @@ T30 → T34 (README)
 
 ## Phase 4: Transport — REST
 
-- [ ] T20: `flags.module.ts` skeleton — domain/application/infrastructure providers wired (grouped arrays per architecture skill), `controllers: []`/no GraphQL/MCP providers yet (added incrementally in T21–T29). Confirms DI graph resolves with `pnpm build` before adding transport surface.
-- [ ] T21: REST DTOs (`transport/rest/dtos/`): `create-feature-flag.dto.ts`, `set-feature-flag-environment-value.dto.ts` (`{ tenantId, enabled }`), `feature-flag-rest-response.dto.ts`.
-- [ ] T22: `transport/rest/feature-flags.controller.ts` — `FeatureFlagsController @Controller('feature-flags')`, 6 endpoints per design §6.1, `CommandBus`/`QueryBus` dispatch only, `FeatureFlagRestMapper` for response shaping.
-- [ ] T23: Wire `FeatureFlagsController` + `FeatureFlagRestMapper` into `flags.module.ts` `controllers`/`providers`.
+- [x] T20: `flags.module.ts` skeleton — domain/application/infrastructure providers wired (grouped arrays per architecture skill), `controllers: []`/no GraphQL/MCP providers yet (added incrementally in T21–T29). Confirms DI graph resolves with `pnpm build` before adding transport surface.
+  - Registered `FlagsModule` in `ContextsModule` immediately (ahead of the original plan) since a local Postgres cluster was available in this sandbox — let full e2e verification run continuously through the rest of the build instead of waiting for Phase 7.
+- [x] T21: REST DTOs (`transport/rest/dtos/`): `create-feature-flag.dto.ts`, `set-feature-flag-environment-value.dto.ts` (`{ tenantId, enabled }`), `feature-flag-rest-response.dto.ts`.
+  - Also added `tenant-scoped-query.dto.ts` (shared `tenantId` query-param shape for GET/DELETE), `list-feature-flags.dto.ts` (list filters + pagination), `evaluate-feature-flag-rest-response.dto.ts`.
+- [x] T22: `transport/rest/feature-flags.controller.ts` — `FeatureFlagsController @Controller('feature-flags')`, 6 endpoints per design §6.1, `CommandBus`/`QueryBus` dispatch only, `FeatureFlagRestMapper` for response shaping.
+- [x] T23: Wire `FeatureFlagsController` + `FeatureFlagRestMapper` into `flags.module.ts` `controllers`/`providers`.
+  - **Verified end-to-end** against a real local Postgres (`test/flags/feature-flags.e2e-spec.ts`, 10 scenarios): auth 401, create 201/400/409, get-by-key 200/404, toggle-environment 200/404 with per-environment independence, archive 204 idempotent, evaluate 200 fail-safe (missing + archived → false), list scoped by tenantId. `pnpm build` and the full unit suite (96 tests) also green.
 
 ## Phase 5: Transport — GraphQL
 
