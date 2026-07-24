@@ -5,6 +5,7 @@
 
 import { existsSync, readFileSync } from 'fs';
 
+import { TEST_API_KEY } from './api-key';
 import { TESTCONTAINERS_ENV_FILE } from './testcontainers-env';
 
 if (
@@ -27,4 +28,6 @@ process.env.DATABASE_PASSWORD = process.env.DATABASE_PASSWORD ?? 'postgres';
 process.env.DATABASE_DATABASE =
   process.env.DATABASE_DATABASE ?? 'nestjs_template_test';
 process.env.FRONTEND_URL = process.env.FRONTEND_URL ?? 'http://localhost:3001';
+process.env.FEATURE_FLAGS_API_KEY =
+  process.env.FEATURE_FLAGS_API_KEY ?? TEST_API_KEY;
 process.env.NODE_ENV = 'test';

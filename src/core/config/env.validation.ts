@@ -26,6 +26,10 @@ const baseEnvSchema = z
       .string()
       .trim()
       .min(1, 'DATABASE_DATABASE must not be empty'),
+    FEATURE_FLAGS_API_KEY: z
+      .string()
+      .trim()
+      .min(32, 'FEATURE_FLAGS_API_KEY must be at least 32 characters long'),
     SENTRY_DSN: z.string().optional(),
     SENTRY_ENVIRONMENT: z.string().optional(),
     SENTRY_RELEASE: z.string().optional(),

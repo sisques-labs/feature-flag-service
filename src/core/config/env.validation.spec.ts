@@ -11,6 +11,7 @@ function validEnv(
     DATABASE_USERNAME: 'postgres',
     DATABASE_PASSWORD: 'secret',
     DATABASE_DATABASE: 'nestjs_template_db',
+    FEATURE_FLAGS_API_KEY: 'a'.repeat(32),
     ...overrides,
   };
 }
@@ -33,6 +34,14 @@ describe('validateEnv', () => {
 
     expect(() => validateEnv(env)).toThrow(
       /Environment validation failed:[\s\S]*DATABASE_USERNAME/,
+    );
+  });
+
+  it('rejects a FEATURE_FLAGS_API_KEY shorter than 32 characters', () => {
+    const env = validEnv({ FEATURE_FLAGS_API_KEY: 'too-short' });
+
+    expect(() => validateEnv(env)).toThrow(
+      /Environment validation failed:[\s\S]*FEATURE_FLAGS_API_KEY/,
     );
   });
 
