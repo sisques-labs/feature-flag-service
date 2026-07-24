@@ -66,11 +66,15 @@ T30 → T34 (README)
 
 ## Phase 3: Infrastructure
 
-- [ ] T16: `infrastructure/persistence/typeorm/entities/feature-flag.entity.ts` (`FeatureFlagTypeOrmEntity @Entity('feature_flags')`) per design §5.1, including the unique + plain indexes as TypeORM decorators (or confirm they're covered by the migration alone — pick one source of truth and document it in the entity file).
-- [ ] T17: `infrastructure/persistence/typeorm/mappers/feature-flag-typeorm.mapper.ts` (`toAggregate`/`toEntity`/`toViewModel`).
-- [ ] T18: `infrastructure/persistence/typeorm/repositories/feature-flag-typeorm-read.repository.ts` (`findById`, `findByCriteria` via `QueryBuilder` covering all 8 `FilterOperator` values, `findByTenantAndKey`).
-- [ ] T19: `infrastructure/persistence/typeorm/repositories/feature-flag-typeorm-write.repository.ts` (`findById`, `save` — **catch the Postgres unique-violation error code on `(tenant_id, key)` and rethrow as `FeatureFlagKeyAlreadyExistsException`**, per design §11 risk 3 — `delete`, `findByTenantAndKey`, `findByCriteria` throws not-implemented).
-- [ ] T32: Integration tests (Testcontainers Postgres, `test/integration/`): CRUD + `findByTenantAndKey` + cross-tenant data coexistence (two tenants, same `key`, both persist independently) + unique-violation-to-domain-exception mapping from T19.
+- [x] T16: `infrastructure/persistence/typeorm/entities/feature-flag.entity.ts` (`FeatureFlagTypeOrmEntity @Entity('feature_flags')`) per design §5.1, including the unique + plain indexes as TypeORM decorators (or confirm they're covered by the migration alone — pick one source of truth and document it in the entity file).
+  - Migration is the source of truth; entity `@Index` decorators documented as the `DATABASE_SYNCHRONIZE=true` local-dev parity path.
+- [x] T17: `infrastructure/persistence/typeorm/mappers/feature-flag-typeorm.mapper.ts` (`toAggregate`/`toEntity`/`toViewModel`).
+  - Unit-tested directly (no DB dependency): round-trip + null-description handling.
+- [x] T18: `infrastructure/persistence/typeorm/repositories/feature-flag-typeorm-read.repository.ts` (`findById`, `findByCriteria` via `QueryBuilder` covering all 8 `FilterOperator` values, `findByTenantAndKey`).
+- [x] T19: `infrastructure/persistence/typeorm/repositories/feature-flag-typeorm-write.repository.ts` (`findById`, `save` — **catch the Postgres unique-violation error code on `(tenant_id, key)` and rethrow as `FeatureFlagKeyAlreadyExistsException`**, per design §11 risk 3 — `delete`, `findByTenantAndKey`, `findByCriteria` throws not-implemented).
+  - Repository classes are exercised at the integration layer (T32), not unit-mocked — consistent with the architecture skill's test-layer table (persistence behavior belongs in `test/integration` against real Postgres).
+- [x] T32: Integration tests (Testcontainers Postgres, `test/integration/`): CRUD + `findByTenantAndKey` + cross-tenant data coexistence (two tenants, same `key`, both persist independently) + unique-violation-to-domain-exception mapping from T19.
+  - No Docker daemon in this sandbox (Testcontainers can't start), but a local `postgresql@16` cluster was available — verified against that directly (`DATABASE_HOST=localhost DATABASE_PORT=5432 ... npx jest --config test/jest-integration.json`). All 5 scenarios pass against a real Postgres, including the unique-violation → `FeatureFlagKeyAlreadyExistsException` mapping. Re-verify with Testcontainers in CI.
 
 ## Phase 4: Transport — REST
 
