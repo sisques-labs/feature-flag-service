@@ -1,5 +1,5 @@
 change: flags-mvp
-status: tasks
+status: apply
 created: 2026-07-24
 artifact_store: hybrid
 context: flags
@@ -9,8 +9,9 @@ phases:
   spec: done
   design: done
   tasks: done
-  apply: pending
+  apply: done
   verify: pending
   archive: pending
 next_recommended:
-  - sdd-apply
+  - sdd-verify
+  - sdd-archive
