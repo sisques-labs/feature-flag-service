@@ -1,4 +1,6 @@
+import { ApiKeyGuard } from './auth/api-key.guard';
 import { appConfig } from './config/app.config';
+import { authConfig } from './config/auth.config';
 import { validateEnv } from './config/env.validation';
 import { kafkaConfig } from './config/kafka.config';
 import { postgresConfig } from './config/postgres.config';
@@ -11,6 +13,7 @@ import './transport/graphql/registered-enums.graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { APP_GUARD } from '@nestjs/core';
 import { CqrsModule } from '@nestjs/cqrs';
 import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
@@ -30,7 +33,7 @@ const CORE_MODULES = [
   ConfigModule.forRoot({
     isGlobal: true,
     validate: validateEnv,
-    load: [postgresConfig, appConfig, sentryConfig, kafkaConfig],
+    load: [postgresConfig, appConfig, sentryConfig, kafkaConfig, authConfig],
     cache: true,
   }),
   TypeOrmModule.forRootAsync({
@@ -53,13 +56,19 @@ const CORE_MODULES = [
   MetricsModule.forRoot({ appLabel: 'nestjs-template' }),
   MessagingModule.forRoot({ aggregateModuleMap: AGGREGATE_MODULE_MAP }),
   HealthModule,
-  // No auth yet, so the default context builder (`{ requestId }`) is used —
-  // pass `contextBuilder` here once this service resolves an identity.
+  // No per-identity auth yet (see ApiKeyGuard below) — the default MCP
+  // context builder (`{ requestId }`) is used until a service resolves an
+  // actual user/tenant identity, at which point pass `contextBuilder` here.
   McpModule.forRoot({ name: 'nestjs-template', version: '0.1.0' }),
 ];
 
 @Module({
   imports: [...CORE_MODULES],
-  providers: [PingResolver],
+  providers: [
+    PingResolver,
+    // Global — protects every REST, GraphQL, and MCP request with a single
+    // static API key until identity-service provides real auth.
+    { provide: APP_GUARD, useClass: ApiKeyGuard },
+  ],
 })
 export class CoreModule {}

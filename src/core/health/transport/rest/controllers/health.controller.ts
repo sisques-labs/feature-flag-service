@@ -7,8 +7,12 @@ import {
   TypeOrmHealthIndicator,
 } from '@nestjs/terminus';
 
+import { Public } from '../../../../auth/public.decorator';
 import { HealthResponseDto } from '../dtos/health-response.dto';
 
+// Exempt from ApiKeyGuard: k8s/LB liveness and readiness probes call these
+// routes without any credentials.
+@Public()
 @ApiTags('health')
 @Controller('health')
 export class HealthController {

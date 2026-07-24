@@ -1,6 +1,6 @@
 {
-  "name": "sisqueslabs/nestjs-template",
-  "version": "0.1.9",
+  "name": "sisqueslabs/feature-flag-service",
+  "version": "0.0.0",
   "description": "Sisques Labs NestJS service template — DDD+CQRS+Hexagonal, TypeORM/Postgres, Kafka, GraphQL+REST, Sentry, Prometheus, MCP.",
   "author": "Sisques Labs",
   "repository": {
@@ -121,7 +121,8 @@
     "coverageDirectory": "../coverage",
     "testEnvironment": "node",
     "moduleNameMapper": {
-      "^@core/(.*)$": "<rootDir>/core/$1"
+      "^@core/(.*)$": "<rootDir>/core/$1",
+      "^@contexts/(.*)$": "<rootDir>/contexts/$1"
     }
   },
   "lint-staged": {

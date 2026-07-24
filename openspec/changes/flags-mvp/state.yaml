@@ -1,0 +1,17 @@
+change: flags-mvp
+status: apply
+created: 2026-07-24
+artifact_store: hybrid
+context: flags
+phases:
+  explore: skipped
+  proposal: done
+  spec: done
+  design: done
+  tasks: done
+  apply: done
+  verify: pending
+  archive: pending
+next_recommended:
+  - sdd-verify
+  - sdd-archive
