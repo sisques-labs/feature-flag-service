@@ -22,6 +22,12 @@ import './transport/graphql/enums/feature-flag-registered-enums.graphql';
 import { FeatureFlagGraphQLMapper } from './transport/graphql/mappers/feature-flag.mapper';
 import { FeatureFlagMutationsResolver } from './transport/graphql/resolvers/feature-flag-mutations.resolver';
 import { FeatureFlagQueriesResolver } from './transport/graphql/resolvers/feature-flag-queries.resolver';
+import { FeatureFlagArchiveMcpTool } from './transport/mcp/tools/feature-flag-archive.tool';
+import { FeatureFlagCreateMcpTool } from './transport/mcp/tools/feature-flag-create.tool';
+import { FeatureFlagEvaluateMcpTool } from './transport/mcp/tools/feature-flag-evaluate.tool';
+import { FeatureFlagFindByKeyMcpTool } from './transport/mcp/tools/feature-flag-find-by-key.tool';
+import { FeatureFlagSetEnvironmentValueMcpTool } from './transport/mcp/tools/feature-flag-set-environment-value.tool';
+import { FeatureFlagsFindByCriteriaMcpTool } from './transport/mcp/tools/feature-flags-find-by-criteria.tool';
 import { FeatureFlagsController } from './transport/rest/feature-flags.controller';
 import { FeatureFlagRestMapper } from './transport/rest/mappers/feature-flag-rest.mapper';
 
@@ -70,6 +76,15 @@ const GRAPHQL_PROVIDERS = [
   FeatureFlagGraphQLMapper,
 ];
 
+const MCP_TOOLS = [
+  FeatureFlagCreateMcpTool,
+  FeatureFlagSetEnvironmentValueMcpTool,
+  FeatureFlagArchiveMcpTool,
+  FeatureFlagFindByKeyMcpTool,
+  FeatureFlagsFindByCriteriaMcpTool,
+  FeatureFlagEvaluateMcpTool,
+];
+
 @Module({
   imports: [CqrsModule, TypeOrmModule.forFeature(INFRASTRUCTURE_ENTITIES)],
   controllers: [...REST_CONTROLLERS],
@@ -82,6 +97,7 @@ const GRAPHQL_PROVIDERS = [
     ...INFRASTRUCTURE_REPOSITORIES,
     ...REST_PROVIDERS,
     ...GRAPHQL_PROVIDERS,
+    ...MCP_TOOLS,
   ],
 })
 export class FlagsModule {}

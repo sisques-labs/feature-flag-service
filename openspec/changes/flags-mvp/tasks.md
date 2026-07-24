@@ -96,8 +96,9 @@ T30 → T34 (README)
 
 ## Phase 6: Transport — MCP
 
-- [ ] T28: Zod schemas in `transport/mcp/schemas/` — one per tool (6 files) matching each command/query's input shape.
-- [ ] T29: MCP tools in `transport/mcp/tools/` — 6 `{Name}McpTool` classes implementing `IMcpTool<IBaseMcpToolContext>`, tagged `@McpTool()` + `@Injectable()`, dispatching via `CommandBus`/`QueryBus`. Wire into `flags.module.ts` via an `MCP_TOOLS` array spread into providers.
+- [x] T28: Zod schemas in `transport/mcp/schemas/` — one per tool (6 files) matching each command/query's input shape.
+- [x] T29: MCP tools in `transport/mcp/tools/` — 6 `{Name}McpTool` classes implementing `IMcpTool<IBaseMcpToolContext>`, tagged `@McpTool()` + `@Injectable()`, dispatching via `CommandBus`/`QueryBus`. Wire into `flags.module.ts` via an `MCP_TOOLS` array spread into providers.
+  - Smoke-tested with a real MCP SDK client against the running app (Streamable HTTP, `POST /api/mcp`): `tools/list` shows all 6 tools; `feature_flag_create` → `feature_flag_evaluate` (false for missing) → `feature_flag_set_environment_value` → `feature_flag_evaluate` (true) round-trip works end-to-end, including the global `ApiKeyGuard` rejecting an unauthenticated call first. No dedicated tool unit specs — tools are thin CommandBus/QueryBus dispatchers, same as the REST controller and GraphQL resolvers, which are likewise verified via e2e/smoke rather than mocked unit tests in this context.
 
 ## Phase 7: Wiring + Tests + Docs
 
