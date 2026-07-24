@@ -18,6 +18,10 @@ import { FeatureFlagTypeOrmEntity } from './infrastructure/persistence/typeorm/e
 import { FeatureFlagTypeOrmMapper } from './infrastructure/persistence/typeorm/mappers/feature-flag-typeorm.mapper';
 import { FeatureFlagTypeOrmReadRepository } from './infrastructure/persistence/typeorm/repositories/feature-flag-typeorm-read.repository';
 import { FeatureFlagTypeOrmWriteRepository } from './infrastructure/persistence/typeorm/repositories/feature-flag-typeorm-write.repository';
+import './transport/graphql/enums/feature-flag-registered-enums.graphql';
+import { FeatureFlagGraphQLMapper } from './transport/graphql/mappers/feature-flag.mapper';
+import { FeatureFlagMutationsResolver } from './transport/graphql/resolvers/feature-flag-mutations.resolver';
+import { FeatureFlagQueriesResolver } from './transport/graphql/resolvers/feature-flag-queries.resolver';
 import { FeatureFlagsController } from './transport/rest/feature-flags.controller';
 import { FeatureFlagRestMapper } from './transport/rest/mappers/feature-flag-rest.mapper';
 
@@ -60,6 +64,12 @@ const REST_CONTROLLERS = [FeatureFlagsController];
 
 const REST_PROVIDERS = [FeatureFlagRestMapper];
 
+const GRAPHQL_PROVIDERS = [
+  FeatureFlagQueriesResolver,
+  FeatureFlagMutationsResolver,
+  FeatureFlagGraphQLMapper,
+];
+
 @Module({
   imports: [CqrsModule, TypeOrmModule.forFeature(INFRASTRUCTURE_ENTITIES)],
   controllers: [...REST_CONTROLLERS],
@@ -71,6 +81,7 @@ const REST_PROVIDERS = [FeatureFlagRestMapper];
     ...INFRASTRUCTURE_MAPPERS,
     ...INFRASTRUCTURE_REPOSITORIES,
     ...REST_PROVIDERS,
+    ...GRAPHQL_PROVIDERS,
   ],
 })
 export class FlagsModule {}

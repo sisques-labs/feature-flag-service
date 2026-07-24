@@ -88,10 +88,11 @@ T30 → T34 (README)
 
 ## Phase 5: Transport — GraphQL
 
-- [ ] T24: GraphQL request DTOs (`transport/graphql/dtos/requests/`): create/set-environment-value/archive/find-by-key/evaluate inputs, plus `feature-flag-queryable-field.enum.ts` and `feature-flag-filterable-fields.registry.ts` (+ `.spec.ts` per the mandatory Criteria pattern) and `feature-flag-filter.input.ts`/`feature-flag-sort.input.ts` via `createFilterInput`/`createSortInput`.
-- [ ] T25: GraphQL response objects (`transport/graphql/dtos/responses/`): `feature-flag.object.ts`, `paginated-feature-flag-result.object.ts` (extends `BasePaginatedResultDto`). `feature-flag-registered-enums.graphql.ts` registers `FeatureFlagEnvironmentEnum` and `FeatureFlagQueryableFieldEnum`.
-- [ ] T26: `transport/graphql/mappers/feature-flag.mapper.ts` (`FeatureFlagGraphQLMapper`).
-- [ ] T27: `FeatureFlagQueriesResolver` (`featureFlagFindByKey`, `featureFlagsFindByCriteria` with `FilterValidationPipe`, `featureFlagEvaluate`) and `FeatureFlagMutationsResolver` (`featureFlagCreate`, `featureFlagSetEnvironmentValue`, `featureFlagArchive` — using the **global** `MutationResponseGraphQLMapper`, not a locally-provided one). Wire both into `flags.module.ts`.
+- [x] T24: GraphQL request DTOs (`transport/graphql/dtos/requests/`): create/set-environment-value/archive/find-by-key/evaluate inputs, plus `feature-flag-queryable-field.enum.ts` and `feature-flag-filterable-fields.registry.ts` (+ `.spec.ts` per the mandatory Criteria pattern) and `feature-flag-filter.input.ts`/`feature-flag-sort.input.ts` via `createFilterInput`/`createSortInput`.
+- [x] T25: GraphQL response objects (`transport/graphql/dtos/responses/`): `feature-flag.object.ts`, `paginated-feature-flag-result.object.ts` (extends `BasePaginatedResultDto`). `feature-flag-registered-enums.graphql.ts` registers `FeatureFlagEnvironmentEnum` and `FeatureFlagQueryableFieldEnum`.
+- [x] T26: `transport/graphql/mappers/feature-flag.mapper.ts` (`FeatureFlagGraphQLMapper`).
+- [x] T27: `FeatureFlagQueriesResolver` (`featureFlagFindByKey`, `featureFlagsFindByCriteria` with `FilterValidationPipe`, `featureFlagEvaluate`) and `FeatureFlagMutationsResolver` (`featureFlagCreate`, `featureFlagSetEnvironmentValue`, `featureFlagArchive` — using the **global** `MutationResponseGraphQLMapper`, not a locally-provided one). Wire both into `flags.module.ts`.
+  - Verified end-to-end against real Postgres (`test/flags/feature-flags-graphql.e2e-spec.ts`, 5 scenarios): create+findByKey, 404→GraphQL error for missing key, per-environment toggle, idempotent archive + fail-safe evaluate (never a GraphQL error), findByCriteria tenantId filter. Full e2e (18), unit (102), and `pnpm build` all green.
 
 ## Phase 6: Transport — MCP
 
